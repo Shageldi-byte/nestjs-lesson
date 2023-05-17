@@ -21,6 +21,46 @@ model Article {
   updatedAt   DateTime      @updatedAt
 }
 
+model Student {
+  id         Int        @id @default(autoincrement())
+  fullname   String
+  student_id Int        @unique
+  group      Group      @relation(fields: [groupId], references: [id])
+  groupId    Int
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  ExamMark   ExamMark[]
+}
+
+model Group {
+  id         Int       @id @default(autoincrement())
+  name       String
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  Student    Student[]
+}
+
+model Exam {
+  id               Int        @id @default(autoincrement())
+  exam_name        String
+  exam_description String?
+  teacher_name     String
+  created_at       DateTime   @default(now())
+  updated_at       DateTime   @updatedAt
+  ExamMark         ExamMark[]
+}
+
+model ExamMark {
+  id         Int      @id @default(autoincrement())
+  student    Student  @relation(fields: [studentId], references: [id])
+  studentId  Int
+  exam       Exam     @relation(fields: [examId], references: [id])
+  examId     Int
+  point      Float    @default(0)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
 enum ArticleStatus {
   PENDING
   ACCEPTED
