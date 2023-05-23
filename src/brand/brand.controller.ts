@@ -1,8 +1,10 @@
 import { diskStorage } from 'multer';
+import { Roles } from 'src/decorator/roles.decorator';
 import { editFileName } from 'src/helper/file.helper';
 import { BrandService } from './brand.service';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
+import { SharpPipe } from './shar.pipe';
 
 import {
   FileFieldsInterceptor,
@@ -23,6 +25,7 @@ import {
   Post,
   UploadedFile,
   UploadedFiles,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 
@@ -40,18 +43,10 @@ export class BrandController {
     }),
   )
   create(
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 10000 }),
-          new FileTypeValidator({ fileType: 'image/jpeg' }),
-        ],
-      }),
-    )
-    file: Express.Multer.File,
+    @UploadedFile(SharpPipe) image: string,
     @Body() createBrandDto: CreateBrandDto,
   ) {
-    createBrandDto.image = file.path;
+    createBrandDto.image = image;
     return this.brandService.create(createBrandDto);
   }
 
